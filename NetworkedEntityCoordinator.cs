@@ -78,7 +78,8 @@ public class NetworkedEntityCoordinator {
         var createObjectThread = new Thread(CreateObjectHandler) {IsBackground = true, Name = "Create Object Thread"};
         createObjectThread.Start();
 
-        var subscriptionObjectThread = new Thread(SubscriptionStreamHandler) {IsBackground = true, Name = "Subscription Stream Thread"};
+        var subscriptionObjectThread = new Thread(SubscriptionStreamHandler)
+            {IsBackground = true, Name = "Subscription Stream Thread"};
         subscriptionObjectThread.Start();
     }
 
@@ -100,22 +101,28 @@ public class NetworkedEntityCoordinator {
     }
 
     private async void StateStreamHandler() {
-        var req = new ConnectionRequest {
-            Token = _token,
-            Type = (NetworkedType) (((int) workerType) - 1)
-        };
-
-        _stateStreamCall = _stateClient.StateStream(req);
-
         while (!isStopping) {
-            while (await _stateStreamCall.ResponseStream.MoveNext(CancellationToken.None)) {
-                var item = _stateStreamCall.ResponseStream.Current;
+            try {
+                var req = new ConnectionRequest {
+                    Token = _token,
+                    Type = (NetworkedType) (((int) workerType) - 1)
+                };
 
-                NetworkedEntity entity = null;
-                if (_entities.ContainsKey(item.Id))
-                    entity = _entities[item.Id];
+                _stateStreamCall = _stateClient.StateStream(req);
 
-                InstantiateOrUpdateEntity(item, entity);
+
+                while (await _stateStreamCall.ResponseStream.MoveNext(CancellationToken.None)) {
+                    var item = _stateStreamCall.ResponseStream.Current;
+
+                    NetworkedEntity entity = null;
+                    if (_entities.ContainsKey(item.Id))
+                        entity = _entities[item.Id];
+
+                    InstantiateOrUpdateEntity(item, entity);
+                }
+            }
+            catch (Exception e) {
+                Debug.LogError(e.Message);
             }
         }
     }

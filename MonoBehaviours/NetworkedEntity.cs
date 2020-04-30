@@ -4,13 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Reflection.Emit;
-using me.jordanwood.proto.v1.bridge;
 using me.jordanwood.proto.v1.statemanager;
 using Newtonsoft.Json;
 using UnityEngine;
-using UnityEngine.Serialization;
-using UnityEngine.UIElements;
 
 public abstract class NetworkedEntity : MonoBehaviour {
     public string entityId;
@@ -114,7 +110,7 @@ public abstract class NetworkedEntity : MonoBehaviour {
 
             if (memberType == "")
                 return null;
-
+            
             return new Member {
                 AuthoritativeMember = auth,
                 MemberName = x.Name,

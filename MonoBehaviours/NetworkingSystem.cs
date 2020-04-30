@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
+using Google.Protobuf;
 using Grpc.Core;
 using me.jordanwood.proto.v1.statemanager;
 using Newtonsoft.Json;
